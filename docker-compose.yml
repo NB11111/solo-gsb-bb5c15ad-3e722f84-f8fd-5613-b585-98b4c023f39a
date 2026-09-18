@@ -1,0 +1,18 @@
+services:
+  sector-api:
+    build: .
+    image: navigation-light-sector-api:latest
+    container_name: navigation-light-sector-api
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    environment:
+      # 应用监听地址 / 端口；宿主机映射端口由顶层 APP_PORT 控制
+      APP_HOST: 0.0.0.0
+      APP_PORT: 8000
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os,urllib.request; port=os.getenv('APP_PORT','8000'); urllib.request.urlopen(f'http://127.0.0.1:{port}/healthz', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
